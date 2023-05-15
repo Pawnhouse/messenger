@@ -1,7 +1,7 @@
-import clsx from "clsx";
+import clsx from 'clsx';
 
 interface ButtonProps {
-  type?: "button" | "submit" | "reset" | undefined;
+  type?: 'button' | 'submit' | 'reset' | undefined;
   fullWidth?: boolean;
   children?: React.ReactNode;
   onClick?: () => void;
@@ -11,7 +11,7 @@ interface ButtonProps {
 }
 
 const Button: React.FC<ButtonProps> = ({
-  type = "button",
+  type = 'button',
   fullWidth,
   children,
   onClick,

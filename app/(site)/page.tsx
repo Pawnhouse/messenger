@@ -1,36 +1,10 @@
-import Image from "next/image"
-import AuthForm from "./components/AuthForm"
+import EmptyState from '../components/EmptyState';
 
-export default function Home() {
+export default function App() {
+
   return (
-    <div
-      className="
-        flex
-        min-h-full
-        flex-col
-        justify-center
-        py-12
-        sm:px-6
-        lg:px-8
-        bg-gray-100
-      "
-    >
-      <div className="sm:mx-auto" >
-          <Image alt="logo" height={50} width={50} src="logo.svg" className="mx-auto" />
-          <h2
-            className="
-            mt-6 
-            text-center 
-            text-3xl 
-            font-bold 
-            tracking-tight 
-            text-gray-900
-          "
-          >
-            Sign in to continue
-          </h2>
-          <AuthForm/>
-      </div>
+    <div className='hidden lg:block lg:pl-80 h-full'>
+      <EmptyState />
     </div>
   )
 }
