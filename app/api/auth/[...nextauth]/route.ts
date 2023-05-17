@@ -5,13 +5,7 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import NextAuth from 'next-auth/next'
-//import { User as UserModel } from '@prisma/client'
 
-// declare module 'next-auth' {
-//   interface User extends UserModel {
-//     id: number; 
-//   }
-// }
 export const authOptions: AuthOptions = {
     adapter: PrismaAdapter(prisma),
     providers: [

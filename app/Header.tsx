@@ -1,15 +1,28 @@
 import Image from 'next/image';
+import LogOutLink from './components/LogOutLink';
+import clsx from 'clsx';
+import getCurrentUser from './actions/getCurrentUser';
+import { useContext } from 'react';
+import ECDHKeyProvider from './context/ECDHKeyProvider';
 
-export default function Header() {
+export default async function Header() {
+    const user = await getCurrentUser();
 
-    const name = 'User';
     return (
-        <header className='p-1 h-10 bg-gray-200 flex justify-center sm:justify-normal'>
+        <header className={clsx(
+            'p-1 h-10 bg-gray-200 flex justify-center',
+            user ? 'lg:justify-between' : 'lg:justify-start'
+        )}>
             <Image alt='logo' height={40} width={40} src='logo.svg' className='mx-10' priority={true} />
-            {/* <div className=''>
-                Hello, {name}
+            <ECDHKeyProvider user={user} />
 
-            </div> */}
+            {
+                user &&
+                <div className='hidden lg:flex items-center'>
+                    Hello, {user.firstName}
+                    <LogOutLink />
+                </div>
+            }
         </header>
     )
 }
