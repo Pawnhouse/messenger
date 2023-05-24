@@ -1,13 +1,15 @@
 'use client';
 
+
 import { User } from '@prisma/client';
-import UserItem from './UserItem';
+
+import UserBox from './UserBox';
 
 interface UserSidebarProps {
-  items: User[] | { id: string, name: string, image: string | null }[]
+  items: User[] | { id: string, name: string, image: string | null }[];
 }
 
-const UserSidebar: React.FC<UserSidebarProps> = ({
+const UserList: React.FC<UserSidebarProps> = ({
   items,
 }) => {
   return (
@@ -35,7 +37,7 @@ const UserSidebar: React.FC<UserSidebarProps> = ({
           </div>
         </div>
         {items.map((item) => (
-          <UserItem
+          <UserBox
             key={item.id}
             data={item}
           />
@@ -45,4 +47,4 @@ const UserSidebar: React.FC<UserSidebarProps> = ({
   );
 }
 
-export default UserSidebar;
+export default UserList;

@@ -2,7 +2,6 @@
 
 import { IoIosAttach } from 'react-icons/io';
 import MessageInput from './MessageInput';
-import { useState, useEffect } from 'react';
 import {
   FieldValues,
   SubmitHandler,
@@ -11,8 +10,7 @@ import {
 import axios from 'axios';
 import useConversation from '@/app/hooks/useConversation';
 import Button from '@/app/components/Button';
-import { User } from '@prisma/client';
-import { ECDH, createCipheriv, createECDH, randomBytes } from 'crypto';
+import { createCipheriv, randomBytes } from 'crypto';
 import useConversationKey from '@/app/hooks/useConversationKey';
 
 const Form = ({ publicKey, userId }: { publicKey: string | null, userId: string }) => {
@@ -44,13 +42,6 @@ const Form = ({ publicKey, userId }: { publicKey: string | null, userId: string 
     }
     axios.post('/api/message', {
       ...data,
-      conversationId
-    })
-  }
-
-  const handleUpload = (result: any) => {
-    axios.post('/api/message', {
-      image: result.info.secure_url,
       conversationId
     })
   }

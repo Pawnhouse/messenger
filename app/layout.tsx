@@ -1,4 +1,3 @@
-import Header from './Header'
 import AuthContext from './context/AuthContext'
 import ToasterContext from './context/ToasterContext'
 import './globals.css'

@@ -5,7 +5,6 @@ import axios from 'axios';
 import { createECDH } from 'crypto';
 import { useEffect } from 'react';
 
-
 const ECDHKeyProvider = ({ user }: { user: User | null }) => {
   useEffect(() => {
     if (user) {
@@ -20,9 +19,7 @@ const ECDHKeyProvider = ({ user }: { user: User | null }) => {
     }
   }, [user])
 
-  return (
-    <></>
-  );
+  return null;
 }
 
 export default ECDHKeyProvider;

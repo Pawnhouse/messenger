@@ -1,7 +1,6 @@
 'use client';
 
 import { HiChevronLeft, HiSearch } from 'react-icons/hi'
-import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Conversation, User } from '@prisma/client';
 
@@ -16,8 +15,6 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ conversation }) => {
   const otherUser = useConversationUsers(conversation)[0];
-  const [drawerOpen, setDrawerOpen] = useState(false);
-
 
   return (
     <>
@@ -59,7 +56,6 @@ const Header: React.FC<HeaderProps> = ({ conversation }) => {
         </div>
         <HiSearch
           size={32}
-          onClick={() => setDrawerOpen(true)}
           className='
           text-gray-500
           cursor-pointer

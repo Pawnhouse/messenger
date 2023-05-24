@@ -1,9 +1,6 @@
 'use client';
 
-import axios from 'axios';
-import { useEffect, useRef, useState } from 'react';
-
-import useConversation from '@/app/hooks/useConversation';
+import { useRef } from 'react';
 import MessageBox from './MessageBox';
 import { FullMessageType } from '@/app/libs/types';
 import useConversationKey from '@/app/hooks/useConversationKey';
@@ -18,9 +15,7 @@ interface BodyProps {
 
 const Body: React.FC<BodyProps> = ({ initialMessages = [], publicKey, userId }) => {
   const bottomRef = useRef<HTMLDivElement>(null);
-  const [messages, setMessages] = useState(initialMessages);
-
-  const { conversationId } = useConversation();
+  const messages = initialMessages;
   const { conversationKey, isLoading } = useConversationKey({ publicKey, userId });
 
   let decryptedMessages;

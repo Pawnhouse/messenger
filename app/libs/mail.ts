@@ -2,7 +2,7 @@ import { createTransport } from 'nodemailer'
 import prisma from './prismaDB'
 
 
-let transporter = createTransport(
+const transporter = createTransport(
   {
     host: process.env.EMAIL_SERVER_HOST,
     port: 465,

@@ -10,11 +10,11 @@ export default async function MainLayout({ children }: { children: React.ReactNo
     const users = await getUsers();
     return (
         <>
-            {/* @ts-expect-error */}
+            {/* @ts-expect-error async compoent*/}
             <Header />
             <main className='flex-grow flex justify-items-stretch'>
                 <UserSidebar items={users}/>
-                {/* @ts-expect-error */}
+                {/* @ts-expect-error async compoent*/}
                 <Sidebar>
                     {children}
                 </Sidebar>

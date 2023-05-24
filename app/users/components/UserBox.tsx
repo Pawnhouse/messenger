@@ -1,31 +1,21 @@
-import axios from 'axios';
-import { useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import {  User } from '@prisma/client';
 
 import Avatar from '@/app/components/Avatar';
 
 interface UserBoxProps {
-  data: User | { id: string, name: string, image: string | null }
+  data: User | {id: string, name: string, image: string | null}
 }
 
-const UserItem: React.FC<UserBoxProps> = ({ 
+const UserBox: React.FC<UserBoxProps> = ({ 
   data
 }) => {
-  const router = useRouter();
 
-  const handleClick = useCallback(() => {
+  
 
-    axios.post('/api/conversation', { userId: data.id })
-    .then((data) => {
-      router.push(`/chat/${data.data.id}`);
-    })
-
-  }, [data, router]);
   return (
     <>
+
       <div
-        onClick={handleClick}
         className='
           w-full 
           relative 
@@ -56,4 +46,4 @@ const UserItem: React.FC<UserBoxProps> = ({
   );
 }
  
-export default UserItem;
+export default UserBox;

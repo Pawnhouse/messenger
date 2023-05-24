@@ -2,7 +2,6 @@ import Image from 'next/image';
 import LogOutLink from './components/LogOutLink';
 import clsx from 'clsx';
 import getCurrentUser from './actions/getCurrentUser';
-import { useContext } from 'react';
 import ECDHKeyProvider from './context/ECDHKeyProvider';
 
 export default async function Header() {

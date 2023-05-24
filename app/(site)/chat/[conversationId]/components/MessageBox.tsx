@@ -2,7 +2,6 @@
 
 import clsx from 'clsx';
 import Image from 'next/image';
-import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Avatar from '@/app/components/Avatar';
 import { FullMessageType } from '@/app/libs/types';
@@ -14,13 +13,9 @@ interface MessageBoxProps {
 }
 
 const MessageBox: React.FC<MessageBoxProps> = ({ 
-  data, 
-  isLast
+  data
 }) => {
   const session = useSession();
-  const [imageModalOpen, setImageModalOpen] = useState(false);
-
-
   const isOwn = session.data?.user?.email === data?.sender?.email;
 
   const container = clsx('flex gap-3 p-4', isOwn && 'justify-end');
@@ -52,7 +47,6 @@ const MessageBox: React.FC<MessageBoxProps> = ({
               alt='Image'
               height='288'
               width='288'
-              onClick={() => setImageModalOpen(true)} 
               src={data.image} 
               className='
                 object-cover 

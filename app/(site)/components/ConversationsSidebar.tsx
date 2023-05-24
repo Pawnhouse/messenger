@@ -1,10 +1,6 @@
 'use client';
 
 import { User } from '@prisma/client';
-import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
-import { useEffect, useMemo, useState } from 'react';
-import { MdOutlineGroupAdd } from 'react-icons/md';
 import clsx from 'clsx';
 
 import useConversation from '@/app/hooks/useConversation';
@@ -19,16 +15,10 @@ interface ConversationsSidebarProps {
 }
 
 const ConversationsSidebar: React.FC<ConversationsSidebarProps> = ({ 
-  initialItems, 
-  users
+  initialItems
 }) => {
-  const [items, setItems] = useState(initialItems);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const router = useRouter();
-  const session = useSession();
+  const items = initialItems;
   const { conversationId, isOpen } = useConversation();
-
 
   return (
     <>

@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 
 import prisma from '../../libs/prismaDB'
 import { NextResponse } from 'next/server';
-import sendOneTimePassword from '../../libs/mail'
+//import sendOneTimePassword from '../../libs/mail'
 
 export async function POST(
     request: Request

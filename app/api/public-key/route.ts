@@ -15,7 +15,7 @@ export async function POST(
         if (typeof publicKey !== 'string') {
             return new NextResponse('Incorrect key', { status: 400 });
         }
-        const newMessage = await prisma.user.update({
+        await prisma.user.update({
             data: {publicKey},
             where: {id: currentUser.id}
         });

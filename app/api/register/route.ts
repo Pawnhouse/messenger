@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 
 import prisma from '../../libs/prismaDB'
 import { NextResponse } from 'next/server';
-import sendOneTimePassword from '../../libs/mail'
+//import sendOneTimePassword from '../../libs/mail'
 
 export async function POST(
   request: Request
@@ -18,7 +18,7 @@ export async function POST(
       username,
       password
     } = body;
-    const birthday_date = birthday === '' || birthday == null ? undefined : new Date(birthday);
+    const birthday_date = birthday === '' || birthday ? new Date(birthday) : undefined;
 
     let existingUser = await prisma.user.findFirst({ where: { username, isVerifiedEmail: true } }) ||
       await prisma.user.findFirst({ where: { email, isVerifiedEmail: true } });
@@ -30,13 +30,19 @@ export async function POST(
       return new NextResponse('Choose other email', { status: 400 });
     }
     if (password.length < 8) {
-      return new NextResponse('Password must be at least 8 characters', { status: 400 });
+      return new NextResponse(
+        'Password must be at least 8 characters',
+        { status: 400 }
+      );
     }
     if (password.search(/[a-zA-Z]/) === -1 || password.search(/\d/) === -1) {
-      return new NextResponse('Password must contain letter and number', { status: 400 });
+      return new NextResponse(
+        'Password must contain letter and number',
+        { status: 400 }
+      );
     }
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const hashedPassword = await bcrypt.hash(password, 14);
     let name = firstName + ' ' + surname;
     name = name.trim().slice(0, 50);
     const user = await prisma.user.create({

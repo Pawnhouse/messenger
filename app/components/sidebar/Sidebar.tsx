@@ -1,6 +1,5 @@
 import DesktopSidebar from './DesktopSidebar';
 import getCurrentUser from '../../actions/getCurrentUser';
-import MobileFooter from './MobileFooter';
 
 
 async function Sidebar({ children }: {
@@ -11,10 +10,7 @@ async function Sidebar({ children }: {
         <>
             <DesktopSidebar user={user} />
             {children}
-
         </>
-
-
     )
 }
 

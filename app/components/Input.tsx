@@ -42,6 +42,7 @@ const Input: React.FC<InputProps> = ({
       </label>
       <div className='mt-2'>
         <input
+          data-testid={id}
           id={id}
           type={type}
           autoComplete={id}

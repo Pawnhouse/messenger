@@ -2,8 +2,6 @@
 
 import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Conversation, Message, User } from '@prisma/client';
-import { useSession } from 'next-auth/react';
 import clsx from 'clsx';
 
 import Avatar from '@/app/components/Avatar';

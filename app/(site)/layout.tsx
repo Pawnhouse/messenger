@@ -10,11 +10,11 @@ export default async function MainLayout({ children }: { children: React.ReactNo
     const conversations = await getConversations();
     return (
         <>
-            {/* @ts-expect-error */}
+            {/* @ts-expect-error async component*/}
             <Header />
             <main className='flex-grow flex justify-items-stretch'>
                 <ConversationsSidebar initialItems={conversations} users={[]} />
-                {/* @ts-expect-error */}
+                {/* @ts-expect-error async component*/}
                 <Sidebar>
                     {children}
                 </Sidebar>

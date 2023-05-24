@@ -3,10 +3,11 @@ import Link from 'next/link';
 import clsx from 'clsx';
 import { User } from '@prisma/client';
 import Avatar from '../Avatar';
+import { IconType } from 'react-icons/lib';
 
 interface MobileItemProps {
   href: string;
-  icon?: any;
+  icon?: IconType;
   active?: boolean;
   onClick?: () => void;
   user?: User | null;

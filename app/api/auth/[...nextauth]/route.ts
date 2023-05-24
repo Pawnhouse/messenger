@@ -21,7 +21,7 @@ export const authOptions: AuthOptions = {
                     isVerifiedEmail: profile.email_verified,
                     firstName: profile.given_name,
                     surname: profile.family_name,
-                  }
+                }
             },
         }),
         CredentialsProvider({

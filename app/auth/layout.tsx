@@ -1,5 +1,4 @@
-import Header from "../Header";
-import getCurrentUser from "../actions/getCurrentUser";
+import Header from '../Header';
 
 export default async function AuthLayout({
     children,
@@ -8,7 +7,7 @@ export default async function AuthLayout({
 }) {
     return (
         <>
-            {/* @ts-expect-error */}
+            {/* @ts-expect-error async component*/}
             <Header />
             <main className='flex-grow flex justify-items-stretch'>
                 {children}

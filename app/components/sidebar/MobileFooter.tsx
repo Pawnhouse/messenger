@@ -4,10 +4,7 @@ import useConversation from '@/app/hooks/useConversation';
 import useRoutes from '@/app/hooks/useRoutes';
 import MobileItem from './MobileItem';
 import { User } from '@prisma/client';
-import Avatar from '../Avatar';
 import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
-import getCurrentUser from '@/app/actions/getCurrentUser';
 
 interface MobileFooterProps {
   user: User | null;
