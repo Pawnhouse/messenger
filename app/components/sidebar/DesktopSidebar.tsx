@@ -4,6 +4,7 @@ import useRoutes from '../../../app/hooks/useRoutes';
 import DesktopItem from './DesktopItem';
 import { User } from '@prisma/client';
 import Avatar from '../Avatar';
+import { useRouter } from 'next/navigation';
 
 
 interface DesktopSidebarProps {
@@ -11,10 +12,10 @@ interface DesktopSidebarProps {
 }
 const DesktopSidebar = ({ user }: DesktopSidebarProps) => {
     const routes = useRoutes();
+    const router = useRouter();
     return (
         <div className='
             hidden
-            lg:fixed
             lg:left-0
             lg:z-40
             lg:w-20 
@@ -25,7 +26,6 @@ const DesktopSidebar = ({ user }: DesktopSidebarProps) => {
             lg:pb-4
             lg:flex
             lg:flex-col
-            justify-between
         '>
             <nav className='
                 mt-4
@@ -47,7 +47,7 @@ const DesktopSidebar = ({ user }: DesktopSidebarProps) => {
                 </ul>
             </nav>
             <nav className='mt-4 flex flex-col justify-between items-center'>
-                <div className='cursor-pointer hover:opacity-75 transition'>
+                <div className='cursor-pointer hover:opacity-75 transition' onClick={() => { router.push('/profile') }}>
                     <Avatar user={user} />
                 </div>
             </nav>

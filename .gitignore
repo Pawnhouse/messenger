@@ -3,6 +3,8 @@
 .env
 prisma/migrations/
 .vscode
+upload
+public/profilePicture
 
 # dependencies
 /node_modules

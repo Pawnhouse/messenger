@@ -7,15 +7,19 @@ import clsx from 'clsx';
 import Avatar from '@/app/components/Avatar';
 import { FullConversationType } from '@/app/libs/types';
 import useConversationUsers from '@/app/hooks/useConversationUsers';
+import useConversationKey from '@/app/hooks/useConversationKey';
+import decryptMessages from '@/app/libs/decryptMessages';
 
 interface ConversationItemProps {
   data: FullConversationType,
-  selected?: boolean;
+  selected?: boolean,
+  userId: string
 }
 
 const ConversationItem: React.FC<ConversationItemProps> = ({
   data,
-  selected
+  selected,
+  userId
 }) => {
   const otherUser = useConversationUsers(data)[0];
   const router = useRouter();
@@ -30,17 +34,22 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
     return messages[messages.length - 1];
   }, [data.messages]);
 
+  const { publicKey } = data.users.filter((user) => user.id !== userId)[0]
+  const { conversationKey, isLoading } = useConversationKey({ publicKey, userId });
+
   const lastMessageText = useMemo(() => {
     if (lastMessage?.image) {
       return 'Sent an image';
     }
 
     if (lastMessage?.body) {
-      return lastMessage?.body
+      const [decryptedMessage] = decryptMessages(isLoading, [lastMessage], conversationKey);
+      return decryptedMessage?.body
     }
 
     return 'Started a conversation';
-  }, [lastMessage]);
+  }, [lastMessage, isLoading, conversationKey]);
+
 
   return (
     <div
@@ -69,13 +78,11 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
               {data.name || otherUser.name}
             </p>
             {lastMessage?.createdAt && (
-              <p
-                className='
+              <p className='
                   text-xs 
                   text-gray-400 
                   font-light
-                '
-              >
+              '>
                 {lastMessage.createdAt.toDateString()}
               </p>
             )}

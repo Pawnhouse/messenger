@@ -28,6 +28,8 @@ const MobileFooter = ({user}: MobileFooterProps) => {
         bg-white 
         border-t-[1px] 
         lg:hidden
+        sticky
+        bottom-0
       '
     >
       {routes.map((route) => (
@@ -40,7 +42,7 @@ const MobileFooter = ({user}: MobileFooterProps) => {
         />
       ))}
         <MobileItem 
-          href='#' 
+          href='/profile' 
           active={pathname==='/profile'} 
           user={user}
         />     

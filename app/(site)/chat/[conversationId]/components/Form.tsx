@@ -10,13 +10,14 @@ import {
 import axios from 'axios';
 import useConversation from '@/app/hooks/useConversation';
 import Button from '@/app/components/Button';
-import { createCipheriv, randomBytes } from 'crypto';
 import useConversationKey from '@/app/hooks/useConversationKey';
+import { useState } from 'react';
+import encryptMessage from '@/app/libs/encryptMessage';
 
 const Form = ({ publicKey, userId }: { publicKey: string | null, userId: string }) => {
   const { conversationId } = useConversation();
-
   const { conversationKey, isLoading } = useConversationKey({ publicKey, userId });
+  const [submitEnabled, setSubmitEnabled] = useState(false);
 
   const {
     register,
@@ -31,18 +32,15 @@ const Form = ({ publicKey, userId }: { publicKey: string | null, userId: string 
     }
   });
 
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    setValue('message', '', { shouldValidate: true });
-    if(conversationKey) {
-      const iv = randomBytes(16);
-      const cipher = createCipheriv('aes-256-cbc', conversationKey, iv);
-      let cipherMessage = cipher.update(data.message, 'utf-8', 'base64');
-      cipherMessage += cipher.final('base64');
-      data = { message: cipherMessage, iv: iv.toString('base64') }
-    }
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    setValue('message', '', { shouldValidate: true }); console.log(data);
+    setSubmitEnabled(false);
+    data = await encryptMessage(data, conversationKey);
     axios.post('/api/message', {
       ...data,
       conversationId
+    }, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     })
   }
 
@@ -60,10 +58,14 @@ const Form = ({ publicKey, userId }: { publicKey: string | null, userId: string 
         w-full
       '
     >
+      <label>
+        <IoIosAttach size={30} className='text-gray-500' style={{ transform: 'rotate(45deg)' }} />
+        <input type='file' hidden {...register('file')} form='message-form' />
+      </label>
 
-      <IoIosAttach size={30} className='text-gray-500' style={{ transform: 'rotate(45deg)' }} />
 
       <form
+        id='message-form'
         onSubmit={handleSubmit(onSubmit)}
         className='flex items-center gap-2 lg:gap-4 w-full'
       >
@@ -71,11 +73,11 @@ const Form = ({ publicKey, userId }: { publicKey: string | null, userId: string 
           id='message'
           register={register}
           errors={errors}
-          required
           placeholder='Write a message'
+          setSubmitEnabled={empty => setSubmitEnabled(empty && !isLoading)}
         />
 
-        <Button round type='submit' disabled={isLoading}>Send</Button>
+        <Button round type='submit' disabled={!submitEnabled && false}>Send</Button>
 
       </form>
     </div>

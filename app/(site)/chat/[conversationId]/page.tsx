@@ -2,7 +2,6 @@ import Header from './components/Header';
 import getConversationById from '@/app/actions/getConversationById';
 import getMessages from '@/app/actions/getMessages';
 
-
 import EmptyState from '@/app/components/EmptyState';
 import Body from './components/Body';
 import Form from './components/Form';
@@ -26,6 +25,7 @@ const ChatId = async ({ params }: { params: IParams }) => {
     }
     const {publicKey} =  conversation.users.filter((user) => user.id !== currentUser?.id)[0]
     
+
     return (
         <div className='flex-grow'>
             <div className='h-full flex flex-col'>

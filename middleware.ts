@@ -11,5 +11,6 @@ export default withAuth({
       '/',
       '/users/:path*',
       '/chat/:path*',
+      '/profile/:path*',
     ]
   };

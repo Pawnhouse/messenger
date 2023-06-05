@@ -1,11 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import { HiChevronLeft, HiSearch } from 'react-icons/hi'
 import Link from 'next/link';
 import { Conversation, User } from '@prisma/client';
 
 import Avatar from '@/app/components/Avatar';
 import useConversationUsers from '@/app/hooks/useConversationUsers';
+import ProfileDrawer from './ProfileDrawer';
 
 interface HeaderProps {
   conversation: Conversation & {
@@ -15,9 +17,14 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ conversation }) => {
   const otherUser = useConversationUsers(conversation)[0];
-
+  const [profileOpen, setProfileOpen] = useState(false)
   return (
     <>
+      <ProfileDrawer
+        data={conversation}
+        isOpen={profileOpen}
+        onClose={() => setProfileOpen(false)}
+      />
       <div
         className='
         bg-white 
@@ -47,8 +54,10 @@ const Header: React.FC<HeaderProps> = ({ conversation }) => {
           >
             <HiChevronLeft size={32} />
           </Link>
+          <div onClick={() => setProfileOpen(true)}>
+            <Avatar user={otherUser}  />
+          </div>
 
-          <Avatar user={otherUser} />
           <div className='flex flex-col'>
             <div>{conversation.name || otherUser.name}</div>
 

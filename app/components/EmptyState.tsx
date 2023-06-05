@@ -1,6 +1,6 @@
 const EmptyState = () => {
     return ( 
-      <div 
+      <div style={{ background: '#A4DED4' }}
         className='
           px-4 
           py-10 

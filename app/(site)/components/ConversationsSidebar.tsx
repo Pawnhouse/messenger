@@ -12,10 +12,12 @@ interface ConversationsSidebarProps {
   initialItems: FullConversationType[];
   users: User[];
   title?: string;
+  userId: string;
 }
 
 const ConversationsSidebar: React.FC<ConversationsSidebarProps> = ({ 
-  initialItems
+  initialItems,
+  userId
 }) => {
   const items = initialItems;
   const { conversationId, isOpen } = useConversation();
@@ -23,7 +25,6 @@ const ConversationsSidebar: React.FC<ConversationsSidebarProps> = ({
   return (
     <>
       <aside className={clsx(`
-        ml-20
         lg:w-80 
         lg:block
         overflow-y-auto 
@@ -41,6 +42,7 @@ const ConversationsSidebar: React.FC<ConversationsSidebarProps> = ({
               key={item.id}
               data={item}
               selected={+conversationId === item.id}
+              userId={userId}
             />
           ))}
         </div>
