@@ -8,34 +8,37 @@ import Avatar from '@/app/components/Avatar';
 import { FullConversationType } from '@/app/libs/types';
 import useConversationUsers from '@/app/hooks/useConversationUsers';
 import useConversationKey from '@/app/hooks/useConversationKey';
-import decryptMessages from '@/app/libs/decryptMessages';
+import decryptMessages from '@/app/libs/cryptography/decryptMessages';
 
 interface ConversationItemProps {
   data: FullConversationType,
   selected?: boolean,
-  userId: string
+  userId: string,
 }
 
 const ConversationItem: React.FC<ConversationItemProps> = ({
   data,
   selected,
-  userId
+  userId,
 }) => {
   const otherUser = useConversationUsers(data)[0];
   const router = useRouter();
-
   const handleClick = useCallback(() => {
     router.push(`/chat/${data.id}`);
   }, [data, router]);
 
-  const lastMessage = useMemo(() => {
+  const lastMessage = useMemo(() => { 
     const messages = data.messages || [];
 
     return messages[messages.length - 1];
   }, [data.messages]);
 
-  const { publicKey } = data.users.filter((user) => user.id !== userId)[0]
-  const { conversationKey, isLoading } = useConversationKey({ publicKey, userId });
+  let { publicKey } = data.users.filter((user) => user.id !== userId)[0]
+  if (data.isGroup) {
+    publicKey = data.publicKey
+  }
+  const partialKey = data.keys.find((key) => key.receiverId === userId)
+  const { conversationKey, isLoading } = useConversationKey(publicKey, userId, partialKey);
 
   const lastMessageText = useMemo(() => {
     if (lastMessage?.image) {
@@ -69,7 +72,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
         selected ? 'bg-neutral-100' : 'bg-white'
       )}
     >
-      <Avatar user={otherUser} />
+      <Avatar user={otherUser} isGroup={data.isGroup}/>
       <div className='min-w-0 flex-1'>
         <div className='focus:outline-none'>
           <span className='absolute inset-0' aria-hidden='true' />

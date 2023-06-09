@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, useMemo } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { IoClose } from 'react-icons/io5'
 import { Conversation, User } from '@prisma/client';
@@ -8,7 +8,6 @@ import { Conversation, User } from '@prisma/client';
 import useConversationUsers from '@/app/hooks/useConversationUsers';
 
 import Avatar from '@/app/components/Avatar';
-import ConfirmModal from './ConfirmModal';
 import ProfileDrawerItem from './ProfileDrawerItem';
 
 interface ProfileDrawerProps {
@@ -24,7 +23,6 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
   onClose,
   data,
 }) => {
-  const [confirmOpen, setConfirmOpen] = useState(false);
   const otherUser = useConversationUsers(data)[0];
 
   const title = useMemo(() => {
@@ -33,10 +31,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
 
   return (
     <>
-      <ConfirmModal
-        isOpen={confirmOpen}
-        onClose={() => setConfirmOpen(false)}
-      />
+      
       <Transition.Root show={isOpen} as={Fragment}>
         <Dialog as='div' className='relative z-50' onClose={onClose}>
           <Transition.Child
@@ -82,7 +77,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                       <div className='relative mt-6 flex-1 px-4 sm:px-6'>
                         <div className='flex flex-col items-center'>
                           <div className='mb-2'>
-                            <Avatar user={otherUser} />
+                            <Avatar user={otherUser} isGroup={data.isGroup} />
                           </div>
                           <div className='mb-4'>
                             {title}
@@ -90,29 +85,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                           <div className='w-full pb-5 pt-5 sm:px-0 sm:pt-0'>
                             <dl className='space-y-8 px-4 sm:space-y-6 sm:px-6'>
                               {data.isGroup && (
-                                <div>
-                                  <dt
-                                    className='
-                                  text-sm 
-                                  font-medium 
-                                  text-gray-500 
-                                  sm:w-40 
-                                  sm:flex-shrink-0
-                                '
-                                  >
-                                    Emails
-                                  </dt>
-                                  <dd
-                                    className='
-                                  mt-1 
-                                  text-sm 
-                                  text-gray-900 
-                                  sm:col-span-2
-                                '
-                                  >
-                                    {data.users.map((user) => user.email).join(', ')}
-                                  </dd>
-                                </div>
+                                <ProfileDrawerItem name='Usernames' value={data.users.map((user) => user.username).join(', ')} />
                               )}
                               {!data.isGroup && (
                                 <>
@@ -120,7 +93,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                                   <ProfileDrawerItem name='First name' value={otherUser.firstName} hr />
                                   <ProfileDrawerItem name='Middle name' value={otherUser.middleName} hr />
                                   <ProfileDrawerItem name='Surname' value={otherUser.surname} hr />
-                                  <ProfileDrawerItem name='Birthday' value={otherUser.birthday?.toDateString() || '?'} hr/>
+                                  <ProfileDrawerItem name='Birthday' value={otherUser.birthday?.toDateString() || '?'} hr />
                                 </>
                               )}
                             </dl>

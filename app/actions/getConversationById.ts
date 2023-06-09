@@ -17,6 +17,7 @@ const getConversationById = async (
       },
       include: {
         users: true,
+        keys: true,
       },
     });
 

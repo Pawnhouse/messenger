@@ -55,7 +55,7 @@ const Header: React.FC<HeaderProps> = ({ conversation }) => {
             <HiChevronLeft size={32} />
           </Link>
           <div onClick={() => setProfileOpen(true)}>
-            <Avatar user={otherUser}  />
+            <Avatar user={otherUser} isGroup={conversation.isGroup} />
           </div>
 
           <div className='flex flex-col'>

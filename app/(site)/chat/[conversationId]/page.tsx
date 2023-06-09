@@ -16,22 +16,24 @@ const ChatId = async ({ params }: { params: IParams }) => {
     const messages = await getMessages(+params.conversationId);
     const currentUser = await getCurrentUser();
 
-    if (!conversation || !currentUser || conversation.users.length !== 2) {
+    if (!conversation || !currentUser) {
         return (
             <div className='flex-grow'>
                 <EmptyState />
             </div>
         )
     }
-    const {publicKey} =  conversation.users.filter((user) => user.id !== currentUser?.id)[0]
-    
-
+    let { publicKey } = conversation.users.filter((user) => user.id !== currentUser?.id)[0]
+    if (conversation.isGroup) {
+        publicKey = conversation.publicKey
+    }
+    const partialKey = conversation.keys.find((key) => key.receiverId === currentUser.id)
     return (
         <div className='flex-grow'>
             <div className='h-full flex flex-col'>
                 <Header conversation={conversation} />
-                <Body initialMessages={messages} publicKey={publicKey} userId={currentUser.id}/>
-                <Form publicKey={publicKey} userId={currentUser.id}/> 
+                <Body initialMessages={messages} publicKey={publicKey} userId={currentUser.id} conversationPartialKey={partialKey} conversationId={conversation.id} />
+                <Form publicKey={publicKey} userId={currentUser.id} conversationPartialKey={partialKey} />
             </div>
         </div>
     );

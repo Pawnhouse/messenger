@@ -12,15 +12,16 @@ export async function POST(
     const {
       userId,
       isGroup,
-      members,
-      name
+      memberIds,
+      name,
+      conversationKeys
     } = body;
 
     if (!currentUser?.id || !currentUser?.email) {
       return new NextResponse('Unauthorized', { status: 400 });
     }
 
-    if (isGroup && (!members || members.length < 2 || !name)) {
+    if (isGroup && (!memberIds || memberIds.length < 3 || !name)) {
       return new NextResponse('Invalid data', { status: 400 });
     }
 
@@ -30,31 +31,29 @@ export async function POST(
           name,
           isGroup,
           users: {
-            connect: [
-              ...members.map((member: { value: string }) => ({  
-                id: member.value 
-              })),
-              {
-                id: currentUser.id
-              }
-            ]
-          }
+            connect: memberIds.map((id: string) => ({ id }))
+          },
+          keys: {
+            create: conversationKeys
+          },
+          publicKey: currentUser.publicKey
         },
         include: {
           users: true,
+          keys: true,
         }
       });
-      
+
       return NextResponse.json(newConversation);
     }
     const existingConversations = await prisma.conversation.findMany({
       where: {
         users: {
-            every: {
-                id: {
-                    in: [currentUser.id, userId]
-                }
+          every: {
+            id: {
+              in: [currentUser.id, userId]
             }
+          }
         }
       }
     });

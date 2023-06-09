@@ -15,7 +15,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
             <main className='flex-grow flex justify-items-stretch'>
                 {/* @ts-expect-error async compoent*/}
                 <Sidebar>
-                    <UserSidebar items={users} />
+                    <UserSidebar items={users} currentUser={user} />
                     {children}
                 </Sidebar>
             </main>

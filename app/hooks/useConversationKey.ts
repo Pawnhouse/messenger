@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { createECDH } from 'crypto';
+import { createDecipheriv, createECDH } from 'crypto';
+import { ConversationKey } from '@prisma/client';
 
-const useConversationKey = ({ publicKey, userId }: { publicKey: string | null, userId: string }) => {
+const useConversationKey = (publicKey: string | null, userId: string, conversationPartialKey?: ConversationKey) => {
   const [conversationKey, setConversationKey] = useState<Buffer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -14,12 +15,21 @@ const useConversationKey = ({ publicKey, userId }: { publicKey: string | null, u
     
     try {
       const keyObj = createECDH('secp256k1');
-      keyObj.setPrivateKey(privateKey, 'base64');
-      setConversationKey(keyObj.computeSecret(publicKey, 'base64'));
+      keyObj.setPrivateKey(privateKey, 'base64'); 
+      const commonKey = keyObj.computeSecret(publicKey, 'base64'); 
+
+      if(conversationPartialKey) {
+        const decipher = createDecipheriv('aes-256-cbc', commonKey, Buffer.from(conversationPartialKey.iv, 'base64'));
+        let decryptedData = decipher.update(conversationPartialKey.value, 'base64');
+        decryptedData = Buffer.concat([decryptedData, decipher.final()]);   
+        setConversationKey(decryptedData); 
+      } else {
+        setConversationKey(commonKey);
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [publicKey, userId])
+  }, [conversationPartialKey, publicKey, userId])
   return { conversationKey, isLoading }
 };
 

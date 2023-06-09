@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import getCurrentUser from '@/app/actions/getCurrentUser';
 import prisma from '@/app/libs/prismaDB';
 import fs from 'fs';
+import { pusherServer } from '@/app/libs/pusher';
 
 export async function POST(
   request: Request
@@ -16,7 +17,6 @@ export async function POST(
     const file = formData.get('file') as File | null;
 
     if (file) {
-      console.log(Buffer.from(await file.arrayBuffer()))
       fs.writeFileSync((process.env.UPLOAD_DIRECTORY || 'upload/') + file.name, Buffer.from(await file.arrayBuffer()))
     }
     const message = formData.get('message') as string | null;
@@ -47,7 +47,7 @@ export async function POST(
       }
     });
 
-    await prisma.conversation.update({
+    const updatedConversation = await prisma.conversation.update({
       where: {
         id: conversationId
       },
@@ -64,37 +64,15 @@ export async function POST(
         messages: true,
       }
     });
+    await pusherServer.trigger('conversation_' + conversationId, 'new_message', newMessage);
+    updatedConversation.users.map((user) => {
+      pusherServer.trigger(user.id, 'update_conversation', {
+        id: conversationId,
+        messages: updatedConversation.messages
+      });
+    });
+
     return NextResponse.json(newMessage)
-  } catch (error) {
-    console.error(error);
-    return new NextResponse('Internal', { status: 500 });
-  }
-}
-
-export async function GET(request: Request) {
-  try {
-    const currentUser = await getCurrentUser();
-    if (!currentUser?.id || !currentUser?.email) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
-
-    const { searchParams } = new URL(request.url);
-    const id = +(searchParams.get('id') || 0);
-    const message = await prisma.message.findFirstOrThrow({ where: { id } });
-    const conversationId = message.conversationId;
-
-    if (!await prisma.conversation.findFirst({
-      where: {
-        id: conversationId, users: { some: { id: currentUser.id } }
-      }
-    })) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
-    if (!message.image) {
-      return new NextResponse('Not found', { status: 404 });
-    }
-    const buffer = fs.readFileSync((process.env.UPLOAD_DIRECTORY || 'upload/') + message.image);
-    return new NextResponse(buffer.toString('base64'));
   } catch (error) {
     console.error(error);
     return new NextResponse('Internal', { status: 500 });

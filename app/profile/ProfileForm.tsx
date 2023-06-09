@@ -41,17 +41,12 @@ const ProfileForm = ({ user }: { user: User }) => {
         }
     });
 
-    console.log({
-        ...user,
-        birthday: dateToString(user.birthday || new Date())
-    })
-
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-        setValue('message', '', { shouldValidate: true }); console.log(data);
+        setValue('message', '', { shouldValidate: true }); 
         setSubmitEnabled(false);
         axios.post('/api/profile', data, {
             headers: { 'Content-Type': 'multipart/form-data' },
-        }).then(res => { console.log(res); 
+        }).then(res => { 
             toast.success(res.data || 'Saved')
         }).catch((error) =>
             toast.error(error.data || 'Server error')

@@ -33,11 +33,12 @@ model User {
   conversationIds Int[]
   conversations   Conversation[]
 
-  inContacts Contact[] @relation("In_contact")
-  contacts   Contact[] @relation("Contact")
-  accounts   Account[]
-  messages   Message[]
-  sessions   Session[]
+  inContacts       Contact[]         @relation("In_contact")
+  contacts         Contact[]         @relation("Contact")
+  conversationKeys ConversationKey[]
+  accounts         Account[]
+  messages         Message[]
+  sessions         Session[]
 }
 
 model Account {
@@ -81,9 +82,13 @@ model Conversation {
   lastMessageAt DateTime @default(now())
   name          String?
   isGroup       Boolean?
+  publicKey     String?
 
   messagesIds Int[]
   messages    Message[]
+
+  keysIds String[]
+  keys    ConversationKey[]
 
   userIds String[]
   users   User[]
@@ -105,8 +110,20 @@ model Message {
 
 model Contact {
   id            String @id @default(cuid())
-  contact       String
-  inContact     String
-  userInContact User   @relation("In_contact", fields: [inContact], references: [id])
-  userContact   User   @relation("Contact", fields: [contact], references: [id])
+  contactId     String
+  inContactId   String
+  userInContact User   @relation("In_contact", fields: [inContactId], references: [id])
+  userContact   User   @relation("Contact", fields: [contactId], references: [id])
+}
+
+model ConversationKey {
+  id    String @id @default(cuid())
+  value String
+  iv    String
+
+  receiverId String
+  receiver   User   @relation(fields: [receiverId], references: [id])
+
+  conversationId Int
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 }

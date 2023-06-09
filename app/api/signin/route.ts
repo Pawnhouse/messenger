@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 
 import prisma from '../../libs/prismaDB'
 import { NextResponse } from 'next/server';
-//import sendOneTimePassword from '../../libs/mail'
+import sendOneTimePassword from '../../libs/mail'
 
 export async function POST(
     request: Request
@@ -25,8 +25,9 @@ export async function POST(
         if (!isCorrectPassword) {
             return new NextResponse('Incorrect username or password', { status: 400 });
         }
-
-        //await sendOneTimePassword(email, existingUser.id);
+        if (process.env.EMAIL_VERIFICATION === 'verify') {
+            await sendOneTimePassword(email, existingUser.id);
+        }
         return new NextResponse(undefined, { status: 200 });
 
     } catch (e) {

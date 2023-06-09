@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 
 import prisma from '../../libs/prismaDB'
 import { NextResponse } from 'next/server';
-//import sendOneTimePassword from '../../libs/mail'
+import sendOneTimePassword from '../../libs/mail'
 
 export async function POST(
   request: Request
@@ -57,8 +57,9 @@ export async function POST(
         name
       }
     });
-
-    // await sendOneTimePassword(email, user.id, 'Email verification');
+    if (process.env.EMAIL_VERIFICATION === 'verify') {
+      await sendOneTimePassword(email, user.id, 'Email verification');
+    }
     return NextResponse.json(user);
   } catch (e) {
     return new NextResponse('Internal error', { status: 500 });

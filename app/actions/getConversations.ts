@@ -22,8 +22,12 @@ const getConversations = async () => {
         messages: {
           include: {
             sender: true,
+          },
+          orderBy: {
+            createdAt: 'asc'
           }
         },
+        keys: true,
       }
     });
     return conversations;

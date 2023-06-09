@@ -29,21 +29,20 @@ export async function POST(
             })
             return new NextResponse('Picture updated', { status: 200 });
         }
-        let newData: {
+        const newData: {
             [k: string]: FormDataEntryValue | Date | undefined
         } = Object.fromEntries(formData);
-        newData = {...newData, birthday: new Date(newData.birthday as string)};
-        if( newData.password && typeof newData.password === 'string') {
+        if (newData.password && typeof newData.password === 'string') {
             if (newData.password.length < 8) {
                 return new NextResponse(
-                'Password must be at least 8 characters',
-                { status: 400 }
+                    'Password must be at least 8 characters',
+                    { status: 400 }
                 );
             }
             if (newData.password.search(/[a-zA-Z]/) === -1 || newData.password.search(/\d/) === -1) {
                 return new NextResponse(
-                'Password must contain letter and number',
-                { status: 400 }
+                    'Password must contain letter and number',
+                    { status: 400 }
                 );
             }
             newData.hashedPassword = await bcrypt.hash(newData.password, 10);
@@ -51,12 +50,24 @@ export async function POST(
         }
         newData.password = undefined;
         newData.passwordRepeat = undefined;
-        
+
+        if (await prisma.user.findFirst({ where: { email: newData.email as string, NOT: { id: currentUser.id } } })) {
+            return new NextResponse('Email already exists', { status: 400 });
+        }
+
         await prisma.user.update({
             where: { id: currentUser.id },
-            data: newData
+            data: {
+                email: newData.email as string,
+                firstName: newData.firstName as string,
+                middleName: newData.middleName as string,
+                surname: newData.surname as string,
+                birthday: new Date(newData.birthday as string),
+                username: newData.username as string,
+                name: (newData.firstName as string) + ' ' + (newData.surname as string)
+            }
         })
-        
+
         return new NextResponse('Data updated', { status: 200 });
     } catch (error) {
         console.error(error);

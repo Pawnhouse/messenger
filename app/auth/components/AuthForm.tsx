@@ -9,6 +9,7 @@ import { toast } from 'react-hot-toast';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import AuthInputsList from './AuthInputsList';
+import LoadingModal from '@/app/components/modal/LoadingModal';
 
 export type Variant = 'LOGIN' | 'REGISTER' | 'REGISTER2' | 'CONFIRM';
 
@@ -97,6 +98,11 @@ const AuthForm = () => {
 
   return (
     <>
+      {
+        isLoading &&
+        <LoadingModal />
+      }
+
       <h2 className='
         mt-6 
         text-center 

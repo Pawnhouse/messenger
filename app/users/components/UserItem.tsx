@@ -1,32 +1,79 @@
 import axios from 'axios';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {  User } from '@prisma/client';
+import { User } from '@prisma/client';
 
 import Avatar from '@/app/components/Avatar';
+import { toast } from 'react-hot-toast';
+import { AiOutlineUserAdd, AiOutlineUserDelete } from 'react-icons/ai';
+import clsx from 'clsx';
+import LoadingModal from '@/app/components/modal/LoadingModal';
 
 interface UserBoxProps {
-  data: User | { id: string, name: string, image: string | null }
+  data: User
+  isSearchContact: boolean
+  isDelete: boolean
+  contactIds: string[]
+  setContactIds: (contactIds: string[]) => void
 }
 
-const UserItem: React.FC<UserBoxProps> = ({ 
-  data
+const UserItem: React.FC<UserBoxProps> = ({
+  data,
+  isSearchContact: isNewContact,
+  isDelete,
+  contactIds,
+  setContactIds,
 }) => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false)
+  const isClickableState = !isDelete && contactIds.includes(data.id)
 
   const handleClick = useCallback(() => {
+    if (isClickableState) {
+      axios.post('/api/conversation', { userId: data.id })
+        .then((data) => {
+          router.push(`/chat/${data.data.id}`);
+        })
+    }
+  }, [isClickableState, data.id, router]);
 
-    axios.post('/api/conversation', { userId: data.id })
-    .then((data) => {
-      router.push(`/chat/${data.data.id}`);
-    })
+  const handleDelete = useCallback(() => {
+    if (isLoading) {
+      return
+    }
+    setIsLoading(true)
+    axios.delete('api/contact/' + data.id)
+      .then(() => {
+        toast.success('Contact deleted')
+        setContactIds(contactIds.filter(id => id !== data.id))
+      })
+      .catch(() => toast.error('Server error'))
+      .finally(() => setIsLoading(false))
+  }, [contactIds, data.id, isLoading, setContactIds])
 
-  }, [data, router]);
+  const handleAdd = useCallback(() => {
+    if (isLoading) {
+      return
+    }
+    setIsLoading(true)
+    axios.post('api/contact', { userId: data.id })
+      .then(() => {
+        toast.success('Added contact')
+        setContactIds([...contactIds, data.id]);
+      })
+      .catch(() => toast.error('Server error'))
+      .finally(() => setIsLoading(false))
+  }, [contactIds, data.id, isLoading, setContactIds]);
+
   return (
     <>
+      {
+        isLoading &&
+        <LoadingModal />
+      }
       <div
         onClick={handleClick}
-        className='
+        className={clsx(`
           w-full 
           relative 
           flex 
@@ -34,16 +81,15 @@ const UserItem: React.FC<UserBoxProps> = ({
           space-x-3 
           bg-white 
           p-3 
-          hover:bg-neutral-100
           rounded-lg
           transition
-          cursor-pointer
-        '
+        `,
+          isClickableState && 'hover:bg-neutral-100 cursor-pointer'
+        )}
       >
         <Avatar user={data} />
         <div className='min-w-0 flex-1'>
           <div className='focus:outline-none'>
-            <span className='absolute inset-0' aria-hidden='true' />
             <div className='flex justify-between items-center mb-1'>
               <p className='text-sm font-medium text-gray-900'>
                 {data.name}
@@ -51,9 +97,42 @@ const UserItem: React.FC<UserBoxProps> = ({
             </div>
           </div>
         </div>
+        {
+          isDelete &&
+          <div
+            onClick={handleDelete}
+            className='
+                rounded-full 
+                p-1 
+                hover:bg-red-100 
+                text-red-800 
+                cursor-pointer  
+                transition
+              '
+          >
+            <AiOutlineUserDelete size={24} />
+          </div>
+        }
+        {
+          isNewContact && !contactIds.includes(data.id) &&
+          <div
+            onClick={handleAdd}
+            className='
+              rounded-full 
+              p-1 
+              hover:bg-blue-100 
+              text-blue-800 
+              cursor-pointer 
+              hover:opacity-75 
+              transition
+            '
+          >
+            <AiOutlineUserAdd size={24} />
+          </div>
+        }
       </div>
     </>
   );
 }
- 
+
 export default UserItem;
