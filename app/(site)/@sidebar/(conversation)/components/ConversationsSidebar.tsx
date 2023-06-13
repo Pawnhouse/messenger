@@ -1,8 +1,6 @@
 'use client';
 
 import { Contact, User } from '@prisma/client';
-import clsx from 'clsx';
-
 import { useEffect, useState } from 'react';
 import useConversation from '@/app/hooks/useConversation';
 import { FullConversationType } from '@/app/libs/types';
@@ -14,7 +12,6 @@ import { pusherClient } from '@/app/libs/pusher';
 interface ConversationsSidebarProps {
   initialItems: FullConversationType[];
   users: User[];
-  title?: string;
   currentUser: User & {
     contacts: Contact[];
   };
@@ -26,7 +23,7 @@ const ConversationsSidebar: React.FC<ConversationsSidebarProps> = ({
   users,
 }) => {
   const [items, setItems] = useState(initialItems);
-  const { conversationId, isOpen } = useConversation();
+  const { conversationId } = useConversation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const contactIds = currentUser.contacts?.map(contact => contact.inContactId) || [];
 
@@ -36,11 +33,11 @@ const ConversationsSidebar: React.FC<ConversationsSidebarProps> = ({
 
   useEffect(() => {
     pusherClient.subscribe(currentUser.id); 
+
     const updateHandler = (conversation: FullConversationType) => {
       conversation.messages.forEach((message) => {
         message.createdAt = new Date(message.createdAt)
       })
-
 
       setItems((current) => current.map((currentConversation) => {
         if (currentConversation.id === conversation.id) { 
@@ -49,16 +46,22 @@ const ConversationsSidebar: React.FC<ConversationsSidebarProps> = ({
             messages: conversation.messages
           };
         }
-
         return currentConversation;
       }));
     }
+
+    const createHandler = (conversation: FullConversationType) => { 
+      setItems([conversation, ...items])
+    }
+
     pusherClient.bind('update_conversation', updateHandler)
+    pusherClient.bind('create_conversation', createHandler) 
     return () => {
       pusherClient.unsubscribe(currentUser.id);
       pusherClient.unbind('update_conversation', updateHandler)
+      pusherClient.unbind('create_conversation', createHandler) 
     }
-  }, [currentUser.id]);
+  }, [currentUser.id, items]);
 
   return (
     <>
@@ -68,13 +71,6 @@ const ConversationsSidebar: React.FC<ConversationsSidebarProps> = ({
         onClose={() => setIsModalOpen(false)}
         currentUser={currentUser}
       />
-      <aside className={clsx(`
-        lg:w-80 
-        lg:block
-        overflow-y-auto 
-        border-r 
-        border-gray-200 
-      `, isOpen ? 'hidden' : 'block w-full left-0')}>
         <div className='px-5'>
           <div className='flex justify-between mb-4 pt-4'>
             <div className='text-2xl font-bold text-neutral-800'>
@@ -104,7 +100,6 @@ const ConversationsSidebar: React.FC<ConversationsSidebarProps> = ({
             />
           ))}
         </div>
-      </aside>
     </>
   );
 }

@@ -14,7 +14,7 @@ const MobileFooter = ({user}: MobileFooterProps) => {
   const routes = useRoutes();
   const pathname = usePathname();
   const { isOpen } = useConversation();
-  if (isOpen) {
+  if (isOpen || !user) {
     return null;
   }
 

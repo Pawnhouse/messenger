@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import UserSidebar from '@/app/users/components/UserSidebar';
+import UserSidebar from '@/app/(site)/@sidebar/users/components/UserSidebar';
 import { Contact, User } from '@prisma/client';
 
 jest.mock('next/navigation', () => ({

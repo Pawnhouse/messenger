@@ -6,7 +6,7 @@ import { HiArrowLeftOnRectangle } from 'react-icons/hi2'
 
 const LogOutLink = () => {
     return (
-        <Link href='/auth' onClick={() => signOut()} className='
+        <Link href='#' onClick={() => signOut()} className='
             flex 
             flex-col
             justify-center

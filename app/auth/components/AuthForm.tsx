@@ -69,8 +69,8 @@ const AuthForm = () => {
           if (callback?.error) {
             throw { response: { data: 'Incorrect code' } }
           }
-          if (callback?.ok && !callback?.error) {
-            router.push('/');
+          if (callback?.ok) {
+            router.refresh();
           }
       }
     } catch (err) {

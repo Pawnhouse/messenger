@@ -22,7 +22,8 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           script: |
             cd ~/messenger
+            pm2 stop all
             git pull
             npm install
             npm run build
-            pm2 reload all
+            pm2 restart all

@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect, useRef, useState } from 'react';
 import MessageBox from './MessageBox';
 import { FullMessageType } from '@/app/libs/types';
@@ -8,7 +6,7 @@ import decryptMessages from '@/app/libs/cryptography/decryptMessages';
 import MessageModal from './MessageModal';
 import { ConversationKey } from '@prisma/client';
 import { pusherClient } from '@/app/libs/pusher';
-
+import filterMessages from '@/app/libs/filterMessages';
 
 interface BodyProps {
   initialMessages: FullMessageType[];
@@ -16,14 +14,16 @@ interface BodyProps {
   userId: string;
   conversationPartialKey?: ConversationKey;
   conversationId: number;
+  searchValue: string;
 }
 
-const Body: React.FC<BodyProps> = ({ initialMessages = [], publicKey, userId, conversationPartialKey, conversationId }) => {
+const Body: React.FC<BodyProps> = ({ initialMessages = [], publicKey, userId, conversationPartialKey, conversationId, searchValue }) => {
   const [selectedMessage, setSelectMessage] = useState<FullMessageType | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState(initialMessages);
   const { conversationKey, isLoading } = useConversationKey(publicKey, userId, conversationPartialKey);
   const decryptedMessages = decryptMessages(isLoading, messages, conversationKey);
+  const filteredMessages = filterMessages(decryptedMessages, searchValue);
 
   useEffect(() => {
     bottomRef?.current?.scrollIntoView();
@@ -75,9 +75,8 @@ const Body: React.FC<BodyProps> = ({ initialMessages = [], publicKey, userId, co
         />
         {
           !isLoading &&
-          decryptedMessages.map((message, i) => (
+          filteredMessages.map((message) => (
             <MessageBox
-              isLast={i === decryptedMessages.length - 1}
               key={message.id}
               data={message}
               conversationKey={conversationKey}

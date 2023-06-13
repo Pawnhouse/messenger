@@ -1,12 +1,10 @@
 import Image from 'next/image';
 import LogOutLink from './LogOutLink';
 import clsx from 'clsx';
-import getCurrentUser from '../actions/getCurrentUser';
 import ECDHKeyProvider from '../context/ECDHKeyProvider';
+import { User } from '@prisma/client';
 
-export default async function Header() {
-    const user = await getCurrentUser();
-
+export default function Header({ user }: { user: User | null }) {
     return (
         <header className={clsx(
             'p-1 h-10 bg-gray-200 flex justify-center',

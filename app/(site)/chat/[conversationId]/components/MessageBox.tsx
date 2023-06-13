@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, MouseEventHandler } from 'react';
 import clsx from 'clsx';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
@@ -51,7 +51,8 @@ const MessageBox: React.FC<MessageBoxProps> = ({
     return file
   }, [conversationKey, data.id, data.image, data.iv])
 
-  const onDownload = async () => {
+  const onDownload: MouseEventHandler<SVGElement> = async (e) => {
+    e.stopPropagation()
     try {
       saveAs(await getFile())
     } catch (error) {
@@ -112,7 +113,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
           {
             data.image && !data.error &&
             <div className='flex items-center'>
-              <AiFillFile className='mr-2 w-6 h-6 text-gray-600 cursor-pointer' onClick={onDownload} />
+              <AiFillFile className='mr-2 w-6 h-6 text-gray-600 cursor-pointer' onClick={onDownload}  />
               <span>{data.image}</span>
             </div>
           }

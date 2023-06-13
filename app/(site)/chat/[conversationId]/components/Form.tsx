@@ -1,5 +1,3 @@
-'use client';
-
 import { IoIosAttach } from 'react-icons/io';
 import MessageInput from './MessageInput';
 import {
@@ -48,41 +46,29 @@ const Form = ({ publicKey, userId, conversationPartialKey }: { publicKey: string
   return (
     <>
       {
-        isLoading &&
+        isLoading && false &&
         <LoadingModal />
       }
-      <div
-        className='
-        py-4 
-        px-4 
-        bg-white 
-        border-t 
-        w-full
-      '
+      <form
+        id='message-form'
+        onSubmit={handleSubmit(onSubmit)}
+        className='flex items-center gap-2 lg:gap-4 max-w-screen-md mx-auto'
       >
+        <label>
+          <IoIosAttach size={30} className='text-gray-500' style={{ transform: 'rotate(45deg)' }} />
+          <input type='file' hidden {...register('file')} form='message-form' />
+        </label>
+        <MessageInput
+          id='message'
+          register={register}
+          errors={errors}
+          placeholder='Write a message'
+          setSubmitEnabled={empty => setSubmitEnabled(empty && !isLoading)}
+        />
 
+        <Button round type='submit' disabled={!submitEnabled && false}>Send</Button>
 
-        <form
-          id='message-form'
-          onSubmit={handleSubmit(onSubmit)}
-          className='flex items-center gap-2 lg:gap-4 max-w-screen-md mx-auto'
-        >
-          <label>
-            <IoIosAttach size={30} className='text-gray-500' style={{ transform: 'rotate(45deg)' }} />
-            <input type='file' hidden {...register('file')} form='message-form' />
-          </label>
-          <MessageInput
-            id='message'
-            register={register}
-            errors={errors}
-            placeholder='Write a message'
-            setSubmitEnabled={empty => setSubmitEnabled(empty && !isLoading)}
-          />
-
-          <Button round type='submit' disabled={!submitEnabled && false}>Send</Button>
-
-        </form>
-      </div>
+      </form>
     </>
 
   );
