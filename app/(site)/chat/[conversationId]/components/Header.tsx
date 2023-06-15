@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import { HiChevronLeft } from 'react-icons/hi'
 import Link from 'next/link';
@@ -61,7 +59,7 @@ const Header: React.FC<HeaderProps> = ({ conversation, isSearch, setIsSearch, se
           >
             <HiChevronLeft size={32} />
           </Link>
-          <div onClick={() => setProfileOpen(true)}>
+          <div onClick={() => setProfileOpen(true)} className='cursor-pointer'>
             <Avatar user={otherUser} isGroup={conversation.isGroup} />
           </div>
 
@@ -73,7 +71,7 @@ const Header: React.FC<HeaderProps> = ({ conversation, isSearch, setIsSearch, se
         <div className='p-0.5 ml-2 text-sm font-medium text-white bg-transparent border-0 rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-300'>
           {
             !isSearch &&
-            <svg aria-hidden='true' className='w-7 h-7 text-gray-500 dark:text-gray-400 cursor-pointer' onClick={() => setIsSearch(true) } fill='currentColor' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path fillRule='evenodd' d='M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z' clipRule='evenodd'></path></svg>
+            <svg aria-hidden='true' className='w-7 h-7 text-gray-500 dark:text-gray-400 cursor-pointer' onClick={() => setIsSearch(true)} fill='currentColor' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path fillRule='evenodd' d='M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z' clipRule='evenodd'></path></svg>
           }
           {
             isSearch &&

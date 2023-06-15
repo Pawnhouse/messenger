@@ -67,14 +67,17 @@ describe('Authentication page', () => {
     })
 
     it('sign in', async () => {
-        const emailInput = screen.getByTestId('email');
-        const passwordInput = screen.getByTestId('password');
+        const emailInput = screen.getByTestId('loginEmail');
+        const passwordInput = screen.getByTestId('loginPassword');
         const continueButton = screen.getAllByRole('button')[0];
         await waitFor(() => {
             fireEvent.change(emailInput, { target: { value: 'john@mail.com' } });
             fireEvent.change(passwordInput, { target: { value: 'password' } });
             fireEvent.click(continueButton);
         })
-        await screen.findByText(/^code$/i);
+        if (process.env.EMAIL_VERIFICATION === 'verify') {
+            await screen.findByText(/^code$/i);
+        }
+
     })
 })

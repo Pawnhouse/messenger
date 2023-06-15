@@ -67,7 +67,8 @@ const Input: React.FC<InputProps> = ({
             sm:text-sm 
             sm:leading-6`,
             errors[id] && 'focus:ring-rose-500',
-            disabled && 'opacity-50 cursor-default'
+            disabled && 'opacity-50 cursor-default',
+            id === 'loginPassword' && 'pr-8'
           )}
         />
       </div>

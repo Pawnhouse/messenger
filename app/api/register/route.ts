@@ -20,8 +20,7 @@ export async function POST(
     } = body;
     const birthday_date = birthday === '' || birthday ? new Date(birthday) : undefined;
 
-    let existingUser = await prisma.user.findFirst({ where: { username, isVerifiedEmail: true } }) ||
-      await prisma.user.findFirst({ where: { email, isVerifiedEmail: true } });
+    let existingUser = await prisma.user.findFirst({ where: { username } }) 
     if (existingUser) {
       return new NextResponse('Choose other username', { status: 400 });
     }

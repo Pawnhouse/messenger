@@ -9,6 +9,7 @@ import { FullConversationType } from '@/app/libs/types';
 import useConversationUsers from '@/app/hooks/useConversationUsers';
 import useConversationKey from '@/app/hooks/useConversationKey';
 import decryptMessages from '@/app/libs/cryptography/decryptMessages';
+import { AiFillFileExclamation } from 'react-icons/ai';
 
 interface ConversationItemProps {
   data: FullConversationType,
@@ -27,7 +28,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
     router.push(`/chat/${data.id}`);
   }, [data, router]);
 
-  const lastMessage = useMemo(() => { 
+  const lastMessage = useMemo(() => {
     const messages = data.messages || [];
 
     return messages[messages.length - 1];
@@ -42,12 +43,12 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 
   const lastMessageText = useMemo(() => {
     if (lastMessage?.image) {
-      return 'Sent an image';
+      return 'Sent a file';
     }
 
     if (lastMessage?.body) {
       const [decryptedMessage] = decryptMessages(isLoading, [lastMessage], conversationKey);
-      return decryptedMessage?.body
+      return decryptedMessage?.error ? (<AiFillFileExclamation />) : decryptedMessage?.body
     }
 
     return 'Started a conversation';
@@ -72,7 +73,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
         selected ? 'bg-neutral-100' : 'bg-white'
       )}
     >
-      <Avatar user={otherUser} isGroup={data.isGroup}/>
+      <Avatar user={otherUser} isGroup={data.isGroup} />
       <div className='min-w-0 flex-1'>
         <div className='focus:outline-none'>
           <span className='absolute inset-0' aria-hidden='true' />

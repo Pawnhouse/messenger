@@ -5,6 +5,8 @@ import {
     FieldValues,
     UseFormRegister
 } from 'react-hook-form';
+import { useState } from 'react';
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 
 interface AuthInputsListProps {
     variant: Variant
@@ -18,42 +20,55 @@ const AuthInputsList: React.FC<AuthInputsListProps> = ({
     errors,
 }) => {
 
-    switch (variant) {
-        case 'LOGIN':
-            return (
+    const [isHidden, setIsHidden] = useState(true)
+
+    return (
+        <>
+            {
+                variant === 'LOGIN' &&
                 <>
-                    <Input label='Email' id='email' register={register} errors={errors} />
-                    <Input label='Password' id='password' register={register} errors={errors} type='password' />
-                    <a href='#' className='font-normal text-gray-400 hover:text-gray-600 text-xs'>
+                    <Input label='Email' id='loginEmail' register={register} errors={errors} />
+                    <div className='w-full relative'>
+                        <Input label='Password' id='loginPassword' register={register} errors={errors} type={isHidden ? 'password' : 'text'} />
+                        <div className='absolute right-3 bottom-2 text-gray-700 text-lg'>
+                            {
+                                isHidden ?
+                                    <AiFillEye onClick={() => setIsHidden(false)} /> :
+                                    <AiFillEyeInvisible onClick={() => setIsHidden(true)} />
+                            }
+                        </div>
+                    </div>
+                    {/* <a href='#' className='font-normal text-gray-400 hover:text-gray-600 text-xs'>
                         Forgot password?
-                    </a>
+                    </a> */}
                 </>
-            )
-        case 'REGISTER':
-            return (
+            }
+            {
+                variant === 'REGISTER' &&
                 <>
-                    <Input label='First name' id='firstName' register={register} errors={errors} />
+                    <Input label='First name' id='firstName' register={register} errors={errors} required />
                     <Input label='Middle name' id='middleName' register={register} errors={errors} />
-                    <Input label='Surname' id='surname' register={register} errors={errors} />
+                    <Input label='Surname' id='surname' register={register} errors={errors} required />
                     <Input label='Birthday' id='birthday' register={register} errors={errors} type='date' />
                 </>
-
-            )
-        case 'REGISTER2':
-            return (
+            }
+            {
+                variant === 'REGISTER2' &&
                 <>
-                    <Input label='Username' id='username' register={register} errors={errors} />
-                    <Input label='Email' id='email' register={register} errors={errors} type='email' />
+                    <Input label='Username' id='username' register={register} errors={errors} required />
+                    <Input label='Email' id='email' register={register} errors={errors} type='email' required />
                     <Input label='Password' id='password' register={register} errors={errors} type='password' />
                     <Input label='Repeat password' id='passwordRepeat' register={register} errors={errors} type='password' />
                 </>
-            )
-        case 'CONFIRM':
-            return (
+            }
+
+            {
+                variant === 'CONFIRM' &&
                 <>
                     <Input label='Code' id='oneTimePassword' register={register} errors={errors} />
                 </>
-            )
-    }
+            }
+        </>
+    )
 }
 export default AuthInputsList

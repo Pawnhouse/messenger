@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import MessageBox from './MessageBox';
+import MessageBox from './message/MessageBox';
 import { FullMessageType } from '@/app/libs/types';
 import useConversationKey from '@/app/hooks/useConversationKey';
 import decryptMessages from '@/app/libs/cryptography/decryptMessages';
-import MessageModal from './MessageModal';
+import MessageModal from './message/MessageModal';
 import { ConversationKey } from '@prisma/client';
 import { pusherClient } from '@/app/libs/pusher';
 import filterMessages from '@/app/libs/filterMessages';

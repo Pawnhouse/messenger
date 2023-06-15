@@ -45,14 +45,37 @@ const AuthForm = () => {
       errors,
     }
   } = useForm<FieldValues>();
+
+  const authenticateCredentials = async (data: FieldValues,) => {
+    const callback = await signIn('credentials', { ...data, redirect: false });
+    if (callback?.error) {
+      throw { response: { data: 'Incorrect code' } }
+    }
+    router.refresh();
+  }
+
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setIsLoading(true);
-    try {
 
+    if (label === 'LOGIN') {
+      data = {
+        ...data,
+        password: data.loginPassword,
+        email: data.loginEmail
+      }
+    }
+
+    try {
       switch (variant) {
         case 'LOGIN':
-          await axios.post('/api/signin', data);
-          setVariant('CONFIRM');
+          if (process.env.EMAIL_VERIFICATION === 'verify') {
+            await axios.post('/api/signin', data);
+            setVariant('CONFIRM');
+            toast('A confirmation code has been sent to your email')
+
+          } else {
+            await authenticateCredentials(data);
+          }
           break;
         case 'REGISTER':
           setVariant('REGISTER2');
@@ -62,16 +85,17 @@ const AuthForm = () => {
             throw { response: { data: 'Passwords don\'t match' } }
           }
           await axios.post('/api/register', data);
-          setVariant('CONFIRM');
+
+          if (process.env.EMAIL_VERIFICATION === 'verify') {
+            setVariant('CONFIRM');
+            toast('A confirmation code has been sent to your email')
+
+          } else {
+            await authenticateCredentials(data);
+          }
           break;
         case 'CONFIRM':
-          const callback = await signIn('credentials', { ...data, redirect: false });
-          if (callback?.error) {
-            throw { response: { data: 'Incorrect code' } }
-          }
-          if (callback?.ok) {
-            router.refresh();
-          }
+          await authenticateCredentials(data);
       }
     } catch (err) {
       toast.error((err as myError)?.response?.data || 'Server error');

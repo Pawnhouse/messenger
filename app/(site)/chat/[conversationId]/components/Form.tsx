@@ -1,5 +1,5 @@
 import { IoIosAttach } from 'react-icons/io';
-import MessageInput from './MessageInput';
+import MessageInput from './message/MessageInput';
 import {
   FieldValues,
   SubmitHandler,
