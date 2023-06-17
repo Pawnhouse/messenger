@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import LogOutLink from './LogOutLink';
 import clsx from 'clsx';
-import ECDHKeyProvider from '../context/ECDHKeyProvider';
+import ECDHKeyProvider from './ECDHKeyProvider';
 import { User } from '@prisma/client';
 
 export default function Header({ user }: { user: User | null }) {
@@ -11,7 +11,10 @@ export default function Header({ user }: { user: User | null }) {
             user ? 'lg:justify-between' : 'lg:justify-start'
         )}>
             <Image alt='logo' height={32} width={40} src='/logo.svg' className='mx-10' priority={true} />
-            <ECDHKeyProvider user={user} />
+            {
+                user &&
+                <ECDHKeyProvider user={user} />
+            }
 
             {
                 user &&

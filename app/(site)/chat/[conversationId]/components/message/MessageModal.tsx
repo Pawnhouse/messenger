@@ -33,7 +33,9 @@ const MessageModal: React.FC<ConfirmModalProps> = ({
     }
   } = useForm<FieldValues>();
 
-  useEffect(() => setValue('newMessage', message?.body), [setValue, message?.body])
+  useEffect(() => {
+    setValue('newMessage', message?.error ? '' : message?.body)
+  }, [setValue, message?.body, message?.error])
 
   const onDelete = useCallback(() => {
     setIsLoading(true);
@@ -58,13 +60,7 @@ const MessageModal: React.FC<ConfirmModalProps> = ({
   return (
     <Modal isOpen={!!message} onClose={onClose}>
       <div className='sm:flex sm:items-start'>
-
-        <div
-          className='
-            text-left
-            flex-grow
-          '
-        >
+        <div className='text-left flex-grow'>
           <Dialog.Title
             as='h3'
             className='text-base font-semibold leading-6 text-gray-900'

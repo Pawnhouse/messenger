@@ -61,7 +61,7 @@ export async function POST(
       },
       include: {
         users: true,
-        messages: true,
+        messages: { orderBy: { createdAt: 'asc' } },
       }
     });
     await pusherServer.trigger('conversation_' + conversationId, 'new_message', newMessage);

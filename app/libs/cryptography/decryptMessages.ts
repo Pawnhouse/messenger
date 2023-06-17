@@ -5,7 +5,7 @@ function decryptMessages(isLoading: boolean, messages: FullMessageType[], conver
     let decryptedMessages;
     if (isLoading) {
         decryptedMessages = messages.map(message => ({ ...message, body: '' }));
-    } else if (conversationKey) {
+    } else {
         decryptedMessages = messages.map(message => {
             message = { ...message } 
 
@@ -13,6 +13,9 @@ function decryptMessages(isLoading: boolean, messages: FullMessageType[], conver
                 return message;
             }
             try {
+                if (!conversationKey) {
+                    throw new Error();
+                }
                 let decryptedData;
 
                 if (message.body) {
@@ -33,9 +36,7 @@ function decryptMessages(isLoading: boolean, messages: FullMessageType[], conver
                 return { ...message, error: true };
             }
         });
-    } else {
-        decryptedMessages = messages;
-    }
+    } 
     return decryptedMessages;
 }
 

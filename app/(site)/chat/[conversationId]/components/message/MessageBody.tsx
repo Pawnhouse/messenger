@@ -2,12 +2,14 @@ import { useEffect, useState, useCallback, MouseEventHandler } from 'react';
 import Image from 'next/image';
 import { FullMessageType } from '@/app/libs/types';
 import { BiCommentError } from 'react-icons/bi';
-import { AiFillFile, AiFillFileExclamation } from 'react-icons/ai';
+import { AiFillFileExclamation } from 'react-icons/ai';
+import { BsFillFileEarmarkArrowDownFill } from 'react-icons/bs';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 import { createDecipheriv } from 'crypto';
 import { IoPlayCircleOutline } from 'react-icons/io5';
 import VideoModal from './VideoModal';
+import AudioPlayer from './AudioPlayer';
 
 type MessageFileType = 'image' | 'video' | 'audio' | 'file' | 'text';
 
@@ -108,7 +110,8 @@ const MessageBody: React.FC<MessageBodyProps> = ({
             {
                 messageFileType === 'image' &&
                 <div className='w-[300px] h-[300px] mb-2'>
-                    {fileUrl &&
+                    {
+                        fileUrl &&
                         <Image
                             alt='Image'
                             width={300}
@@ -119,11 +122,27 @@ const MessageBody: React.FC<MessageBodyProps> = ({
                     }
                 </div>
             }
+            {
+                messageFileType === 'audio' &&
+                <div className='
+                    w-[300px] 
+                    h-12 
+                    mb-2
+                    flex
+                    items-center
+                    gap-5
+                '>
+                    {
+                        fileUrl &&
+                        <AudioPlayer fileUrl={fileUrl} />
+                    }
+                </div>
+            }
 
             {
                 data.image && !data.error &&
                 <div className='flex items-center'>
-                    <AiFillFile className='mr-2 w-6 h-6 text-gray-600 cursor-pointer' onClick={onDownload} />
+                    <BsFillFileEarmarkArrowDownFill className='mr-2 w-6 h-6 text-gray-600 cursor-pointer' onClick={onDownload} />
                     {
                         messageFileType === 'video' &&
                         <IoPlayCircleOutline className='mr-2 w-6 h-6 text-gray-600 cursor-pointer' onClick={onVideo} />

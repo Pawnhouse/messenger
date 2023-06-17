@@ -1,6 +1,3 @@
-'use client';
-
-import { Dispatch, SetStateAction } from 'react';
 import { 
   FieldErrors, 
   FieldValues, 
@@ -14,7 +11,6 @@ interface MessageInputProps {
   required?: boolean;
   register: UseFormRegister<FieldValues>,
   errors: FieldErrors,
-  setSubmitEnabled: Dispatch<SetStateAction<boolean>>
 }
 
 const MessageInput: React.FC<MessageInputProps> = ({ 
@@ -23,7 +19,6 @@ const MessageInput: React.FC<MessageInputProps> = ({
   type, 
   required, 
   register, 
-  setSubmitEnabled
 }) => {
   return (
     <div className='relative w-full'>
@@ -33,7 +28,6 @@ const MessageInput: React.FC<MessageInputProps> = ({
         autoComplete={id}
         {...register(id, { required })}
         placeholder={placeholder}
-        onChange={e => setSubmitEnabled(!!e.target.value)}
         className='
           text-black
           font-light

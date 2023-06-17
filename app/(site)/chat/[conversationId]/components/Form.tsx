@@ -9,20 +9,19 @@ import axios from 'axios';
 import useConversation from '@/app/hooks/useConversation';
 import Button from '@/app/components/Button';
 import useConversationKey from '@/app/hooks/useConversationKey';
-import { useState } from 'react';
 import encryptMessage from '@/app/libs/cryptography/encryptMessage';
 import { ConversationKey } from '@prisma/client';
-import LoadingModal from '@/app/components/modal/LoadingModal';
+import FileInput from './message/FileInput';
 
 const Form = ({ publicKey, userId, conversationPartialKey }: { publicKey: string | null, userId: string, conversationPartialKey?: ConversationKey }) => {
   const { conversationId } = useConversation();
   const { conversationKey, isLoading } = useConversationKey(publicKey, userId, conversationPartialKey);
-  const [submitEnabled, setSubmitEnabled] = useState(false);
 
   const {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: {
       errors,
     }
@@ -32,23 +31,25 @@ const Form = ({ publicKey, userId, conversationPartialKey }: { publicKey: string
     }
   });
 
+  const fileList = watch('file', []);
+
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    setSubmitEnabled(false);
+    if (!data.file && !data.message) {
+      return
+    }
     data = await encryptMessage(data, conversationKey);
     axios.post('/api/message', {
       ...data,
       conversationId
     }, {
       headers: { 'Content-Type': 'multipart/form-data' },
-    }).then(() => setValue('message', ''));
+    }).then(() => {setValue('message', ''); setValue('file', [])});
   }
+
+  const submitDisabled = (!fileList.length && !watch('message')) || isLoading
 
   return (
     <>
-      {
-        isLoading && false &&
-        <LoadingModal />
-      }
       <form
         id='message-form'
         onSubmit={handleSubmit(onSubmit)}
@@ -58,15 +59,19 @@ const Form = ({ publicKey, userId, conversationPartialKey }: { publicKey: string
           <IoIosAttach size={30} className='text-gray-500' style={{ transform: 'rotate(45deg)' }} />
           <input type='file' hidden {...register('file')} form='message-form' />
         </label>
-        <MessageInput
-          id='message'
-          register={register}
-          errors={errors}
-          placeholder='Write a message'
-          setSubmitEnabled={empty => setSubmitEnabled(empty && !isLoading)}
-        />
 
-        <Button round type='submit' disabled={!submitEnabled && false}>Send</Button>
+        {
+          fileList.length > 0 ?
+            <FileInput name={fileList[0].name} onClose={() => setValue('file', [])} /> :
+            <MessageInput
+              id='message'
+              register={register}
+              errors={errors}
+              placeholder={fileList?.length ? '' : 'Write a message'}
+            />
+        }
+
+        <Button round type='submit' disabled={submitDisabled}>Send</Button>
 
       </form>
     </>

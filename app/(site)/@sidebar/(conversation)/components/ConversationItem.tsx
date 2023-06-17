@@ -9,7 +9,7 @@ import { FullConversationType } from '@/app/libs/types';
 import useConversationUsers from '@/app/hooks/useConversationUsers';
 import useConversationKey from '@/app/hooks/useConversationKey';
 import decryptMessages from '@/app/libs/cryptography/decryptMessages';
-import { AiFillFileExclamation } from 'react-icons/ai';
+import { BiCommentError } from 'react-icons/bi';
 
 interface ConversationItemProps {
   data: FullConversationType,
@@ -30,9 +30,8 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 
   const lastMessage = useMemo(() => {
     const messages = data.messages || [];
-
     return messages[messages.length - 1];
-  }, [data.messages]);
+  }, [data]);
 
   let { publicKey } = data.users.filter((user) => user.id !== userId)[0]
   if (data.isGroup) {
@@ -48,7 +47,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 
     if (lastMessage?.body) {
       const [decryptedMessage] = decryptMessages(isLoading, [lastMessage], conversationKey);
-      return decryptedMessage?.error ? (<AiFillFileExclamation />) : decryptedMessage?.body
+      return decryptedMessage?.error ? (<BiCommentError />) : decryptedMessage?.body
     }
 
     return 'Started a conversation';

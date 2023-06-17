@@ -13,6 +13,8 @@ import Image from 'next/image';
 import { User } from '@prisma/client';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import Modal from '@/app/components/modal/Modal';
+import { Dialog } from '@headlessui/react';
 
 type Subscription = 'subscribed' | 'unsubscribed' | 'processing'
 
@@ -28,6 +30,8 @@ function dateToString(date: Date): string {
 
 const ProfileForm = ({ user }: { user: User }) => {
     const [submitEnabled, setSubmitEnabled] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [privateKey, setPrivateKey] = useState('');
     const [subscription, setSubscription] = useState<Subscription>('processing')
     const router = useRouter()
 
@@ -71,6 +75,10 @@ const ProfileForm = ({ user }: { user: User }) => {
         }).catch(() => undefined)
     }, [])
 
+    useEffect(() => {
+        setPrivateKey(localStorage.getItem('ECDH_Private_Key_' + user.id) || '')
+    }, [user.id])
+
     const onSubscription = () => {
         setSubscription('processing')
         axios.post('/api/profile/subscription')
@@ -80,6 +88,22 @@ const ProfileForm = ({ user }: { user: User }) => {
 
     return (
         <>
+            <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+                <div className='sm:flex sm:items-start'>
+                    <div className='text-left flex-grow'>
+                        <Dialog.Title
+                            as='h3'
+                            className='text-base font-semibold leading-6 text-gray-900'
+                        >
+                            Private key
+                        </Dialog.Title>
+                        <div className='mt-2'>
+                            {privateKey}
+                        </div>
+                    </div>
+                </div>
+            </Modal>
+
             <div className='
                 text-2xl 
                 font-bold 
@@ -127,6 +151,13 @@ const ProfileForm = ({ user }: { user: User }) => {
                     <div className='w-24 flex flex-col'>
                         <Button round disabled={subscription !== 'unsubscribed'} onClick={onSubscription}>Subscribe</Button>
                     </div>
+                    <div className='block text-sm font-medium leading-6  text-gray-900'>
+                        Private Key
+                    </div>
+                    <div className='w-24 flex flex-col'>
+                        <Button round onClick={() => setIsOpen(true)} secondary>Show</Button>
+                    </div>
+
                 </div>
 
                 <div className='flex flex-col gap-2'>

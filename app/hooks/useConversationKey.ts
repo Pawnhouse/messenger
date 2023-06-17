@@ -26,6 +26,8 @@ const useConversationKey = (publicKey: string | null, userId: string, conversati
       } else {
         setConversationKey(commonKey);
       }
+    } catch {
+      // catch decipher error
     } finally {
       setIsLoading(false);
     }
