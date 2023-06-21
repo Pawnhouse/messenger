@@ -97,7 +97,7 @@ const ProfileForm = ({ user }: { user: User }) => {
                         >
                             Private key
                         </Dialog.Title>
-                        <div className='mt-2'>
+                        <div className='mt-2 w-52 break-words md:w-full'>
                             {privateKey}
                         </div>
                     </div>
