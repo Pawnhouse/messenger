@@ -51,7 +51,7 @@ export const authOptions: AuthOptions = {
                     user.hashedPassword
                 );
 
-                if (!isCorrectPassword || (user.oneTimePassword !== credentials.oneTimePassword && process.env.EMAIL_VERIFICATION === 'verify')) {
+                if (!isCorrectPassword || (user.oneTimePassword !== credentials.oneTimePassword && process.env.NEXT_PUBLIC_EMAIL_VERIFICATION === 'verify')) {
                     throw new Error('Invalid credentials');
                 }
 

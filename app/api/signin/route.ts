@@ -25,7 +25,7 @@ export async function POST(
         if (!isCorrectPassword) {
             return new NextResponse('Incorrect username or password', { status: 400 });
         }
-        if (process.env.EMAIL_VERIFICATION === 'verify') {
+        if (process.env.NEXT_PUBLIC_EMAIL_VERIFICATION === 'verify') {
             await sendOneTimePassword(email, existingUser.id);
         }
         return new NextResponse(undefined, { status: 200 });

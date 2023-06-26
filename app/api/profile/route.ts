@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import getCurrentUser from '@/app/actions/getCurrentUser';
 import prisma from '@/app/libs/prismaDB';
-import fs from 'fs';
 import bcrypt from 'bcrypt';
+import { UploadApiResponse, v2 as cloudinary } from 'cloudinary'
+import { Readable } from 'stream';
 
 export async function POST(
     request: Request
@@ -17,15 +18,39 @@ export async function POST(
         const picture = formData.get('picture[]') as File | null;
 
         if (picture) {
-            const i = picture.name.search(/\.(png|jpg|jpeg)$/)
-            if (i === -1) {
+            const extensionIndex = picture.name.search(/\.(png|jpg|jpeg)$/)
+            if (extensionIndex === -1) {
                 return new NextResponse('Wrong picture format', { status: 400 });
             }
-            currentUser.image = '/profilePicture/' + currentUser.id + picture.name.slice(i);
-            fs.writeFileSync('public' + currentUser.image, Buffer.from(await picture.arrayBuffer()))
+            const buffer = Buffer.from(await picture.arrayBuffer())
+
+            cloudinary.config({
+                cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+                api_key: process.env.CLOUDINARY_API_KEY,
+                api_secret: process.env.CLOUDINARY_API_SECRET,
+                secure: true,
+            });
+
+            const result = await new Promise<UploadApiResponse>((resolve, reject) => {
+                const cloudinaryStream = cloudinary.uploader.upload_stream(
+                    {
+                        format: picture.name.slice(extensionIndex + 1),
+                        folder: 'profilePicture',
+                    },
+                    (error, result) => {
+                        if (result) {
+                            resolve(result);
+                        } else {
+                            reject(error);
+                        }
+                    }
+                );
+                Readable.from(buffer).pipe(cloudinaryStream)
+            });
+            
             await prisma.user.update({
                 where: { id: currentUser.id },
-                data: { image: currentUser.image }
+                data: { image: result.secure_url }
             })
             return new NextResponse('Picture updated', { status: 200 });
         }

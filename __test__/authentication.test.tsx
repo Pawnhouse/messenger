@@ -75,7 +75,7 @@ describe('Authentication page', () => {
             fireEvent.change(passwordInput, { target: { value: 'password' } });
             fireEvent.click(continueButton);
         })
-        if (process.env.EMAIL_VERIFICATION === 'verify') {
+        if (process.env.NEXT_PUBLIC_EMAIL_VERIFICATION === 'verify') {
             await screen.findByText(/^code$/i);
         }
 

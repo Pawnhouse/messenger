@@ -2,13 +2,13 @@
 
 import useConversation from '@/app/hooks/useConversation';
 import clsx from 'clsx';
-import { useSelectedLayoutSegment } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 
 
 export default function SidebarLayout({ children }: {
     children: React.ReactNode
 }) {
-    const isProfile = useSelectedLayoutSegment('sidebar') === 'profile'
+    const isProfile = usePathname() === '/profile';
     const { isOpen } = useConversation();
 
     return (

@@ -68,7 +68,7 @@ const AuthForm = () => {
     try {
       switch (variant) {
         case 'LOGIN':
-          if (process.env.EMAIL_VERIFICATION === 'verify') {
+          if (process.env.NEXT_PUBLIC_EMAIL_VERIFICATION === 'verify') {
             await axios.post('/api/signin', data);
             setVariant('CONFIRM');
             toast('A confirmation code has been sent to your email')
@@ -86,10 +86,9 @@ const AuthForm = () => {
           }
           await axios.post('/api/register', data);
 
-          if (process.env.EMAIL_VERIFICATION === 'verify') {
+          if (process.env.NEXT_PUBLIC_EMAIL_VERIFICATION === 'verify') {
             setVariant('CONFIRM');
             toast('A confirmation code has been sent to your email')
-
           } else {
             await authenticateCredentials(data);
           }
@@ -112,9 +111,6 @@ const AuthForm = () => {
       .then((callback) => {
         if (callback?.error) {
           toast.error('Invalid credentials!');
-        }
-        if (callback?.ok && !callback?.error) {
-          toast.success('');
         }
       })
       .finally(() => setIsLoading(false));

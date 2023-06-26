@@ -56,7 +56,7 @@ export async function POST(
         name
       }
     });
-    if (process.env.EMAIL_VERIFICATION === 'verify') {
+    if (process.env.NEXT_PUBLIC_EMAIL_VERIFICATION === 'verify') {
       await sendOneTimePassword(email, user.id, 'Email verification');
     }
     return NextResponse.json(user);
